@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 # Create your models here.
 
 
@@ -36,12 +37,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
             max_length=128,
             unique=True)
 
-    phone_number = models.CharField()
+    phone_number = models.CharField(max_length=30, blank=True, null=True)
 
     name = models.CharField(max_length=100, blank=False, null=False)
 
@@ -50,7 +51,7 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = "email"
 
-    objects = UserManager
+    objects = UserManager()
 
 
 class Address(models.Model):
@@ -113,11 +114,11 @@ class Comment(models.Model):
     replies = models.ForeignKey("self", on_delete=models.CASCADE)
 
     ratings = [
-        (1, "1")
-        (2, "2")
-        (3, "3")
-        (4, "4")
-        (5, "5")
+        (1, "1",),
+        (2, "2",),
+        (3, "3",),
+        (4, "4",),
+        (5, "5",),
     ]
 
     rating = models.IntegerField(choices=ratings)
