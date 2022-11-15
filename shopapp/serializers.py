@@ -4,21 +4,9 @@ from .models import (
                 )
 
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super(CustomTokenObtainPairSerializer, cls).get_token(user)
-
-        # Add custom claims
-        token['username'] = user.email
-        return token
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -97,7 +85,7 @@ class CategorySerializer(serializers.ModelSerializer):
         ]
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
@@ -110,6 +98,23 @@ class ProductSerializer(serializers.ModelSerializer):
             'quantity',
             'is_stock',
             'discount',
+        ]
+
+
+class ListProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            'title',
+            'description',
+            'pictures',
+            'category',
+            'creation_date',
+            'price',
+            'quantity',
+            'is_stock',
+            'discount',
+            'user'
         ]
 
 
