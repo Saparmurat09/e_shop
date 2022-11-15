@@ -4,6 +4,67 @@ from .models import (
                 )
 
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super(CustomTokenObtainPairSerializer, cls).get_token(user)
+
+        # Add custom claims
+        token['username'] = user.email
+        return token
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=User.objects.all())]
+            )
+
+    password = serializers.CharField(
+                            write_only=True,
+                            required=True,
+                            validators=[validate_password]
+                )
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'name',
+            'is_admin',
+            'is_staff',
+            'password',
+            'password2',
+        ]
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."}
+            )
+
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            email=validated_data['email'],
+            name=validated_data['name'],
+            is_admin=validated_data['is_admin'],
+            is_staff=validated_data['is_staff'],
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -39,7 +100,6 @@ class ProductSerializer(serializers.ModelSerializer):
             'quantity',
             'is_stock',
             'discount',
-            'user',
         ]
 
 
