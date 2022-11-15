@@ -72,10 +72,20 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'email',
-            'phone_number',
             'name',
             'is_admin',
             'is_staff',
+        ]
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = [
+            'email',
+            'name',
+            'is_admin',
+            'is_staff',
+            'password',
         ]
 
 
@@ -111,7 +121,6 @@ class AddressSerializer(serializers.ModelSerializer):
             'microdistrict',
             'street',
             'flat_number',
-            'user',
         ]
 
 
@@ -124,7 +133,6 @@ class CommentSerializer(serializers.ModelSerializer):
             'replies',
             'rating',
             'creation_date',
-            'user',
         ]
 
 
@@ -134,7 +142,6 @@ class CartSerializer(serializers.ModelSerializer):
         fields = [
             'name',
             'total_price',
-            'user',
         ]
 
 
@@ -152,7 +159,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fielsd = [
-            'user',
+        fields = [
             'cart',
+            'creation_date',
         ]
