@@ -1,7 +1,10 @@
 from django.urls import path
 from shopapp import views
 
-from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenObtainPairView
+)
 
 
 urlpatterns = [
@@ -21,7 +24,7 @@ urlpatterns = [
         'order/',
         views.ListCreateOrder.as_view(),
         name='list_create_order'
-    ), 
+    ),
     path(
         'address/',
         views.ListCreateAddress.as_view(),
@@ -32,7 +35,7 @@ urlpatterns = [
 
     path(
         'login/',
-        views.CustomObtainTokenPairView.as_view(),
+        TokenObtainPairView.as_view(),
         name='token_obtain_pair'
     ),
     path(
