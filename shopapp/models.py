@@ -42,8 +42,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             max_length=128,
             unique=True)
 
-    phone_number = models.CharField(max_length=30, blank=True, null=True)
-
     name = models.CharField(max_length=100, blank=False, null=False)
 
     is_admin = models.BooleanField(default=False, blank=True, null=False)
@@ -52,6 +50,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
 
     objects = UserManager()
+
+    def __str__(self):
+        return str(self.email)
 
 
 class Address(models.Model):
@@ -71,6 +72,9 @@ class Category(models.Model):
     name = models.CharField(
             max_length=20, blank=False,
             null=False, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model):
