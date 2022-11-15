@@ -134,9 +134,12 @@ class Comment(models.Model):
 class Cart(models.Model):
     name = models.CharField(max_length=100, blank=False, null=False)
 
-    total_price = models.FloatField(blank=False, null=False)
+    total_price = models.FloatField(blank=True, null=False, default=0)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
 class CartItem(models.Model):
@@ -151,3 +154,7 @@ class CartItem(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    creation_date = models.DateTimeField(auto_now=True, blank=False)
+
+    def __str__(self):
+        return f"Order {self.id} - {self.creation_date}"
