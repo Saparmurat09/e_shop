@@ -109,8 +109,7 @@ class CreateProduct(generics.CreateAPIView):
 class ListProduct(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ListProductSerializer
-    # authentication_classes = [authentication.SessionAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class ListCreateCategory(generics.ListCreateAPIView):
