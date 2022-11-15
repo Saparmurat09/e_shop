@@ -4,17 +4,19 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 from .permissions import (
-    ProductCommentPermissions
+    # ProductCommentPermissions
+    AdminPermissions
 )
 
 from .models import (
     User,
     Product,
-    # Address, Cart,
+    Address,
+    Cart,
     # CartItem,
     Category,
     Comment,
-    # Order
+    Order
 )
 
 from .serializers import (
@@ -38,8 +40,67 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 
 
-class CreateAddress(generics.CreateAPIView):
+class ListCreateAddress(generics.ListCreateAPIView):
+    model = Address
     serializer_class = AddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Address.objects.filter(user=user)
+
+
+class ListCreateCart(generics.ListCreateAPIView):
+    model = Cart
+    serializer_class = CartSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Cart.objects.filter(user=user)
+
+
+class ListCreateOrder(generics.ListCreateAPIView):
+    model = Order
+
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Order.objects.filter(user=user)
+
+
+class AddCartItem(generics.CreateAPIView):
+    serializer_class = CartItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ListCreateProduct(generics.ListCreateAPIView):
+    model = Product
+    serializer_class = ProductSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Product.objects.filter(user=user)
 
 
 class CreateProduct(generics.CreateAPIView):
@@ -49,23 +110,11 @@ class CreateProduct(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class CreateCart(generics.CreateAPIView):
-    serializer_class = CartSerializer
-
-
-class CreateOrder(generics.CreateAPIView):
-    serializer_class = OrderSerializer
-
-
-class AddCartItem(generics.CreateAPIView):
-    serializer_class = CartItemSerializer
-
-
 class ListProduct(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class ListCreateCategory(generics.ListCreateAPIView):
@@ -79,6 +128,7 @@ class ListCreateComments(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
 
 
-class RetrieveUser(generics.RetrieveAPIView):
+class ListUser(generics.ListAPIView):
     queryset = User.objects.all()
+    permission_classes = [AdminPermissions]
     serializer_class = UserSerializer
