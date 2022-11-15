@@ -10,9 +10,6 @@ class StaffPermissions(permissions.BasePermission):
             return True
 
     def has_object_permissions(self, request, view, obj):
-        if request.user.is_superuser:
-            return True
-
         if request.method in permissions.SAFE_METHODS:
             return True
 
@@ -23,8 +20,6 @@ class StaffPermissions(permissions.BasePermission):
             return True
 
         return False
-
-        #
 
 
 class AdminPermissions(permissions.BasePermission):
