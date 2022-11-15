@@ -1,6 +1,5 @@
 from rest_framework import generics
-from rest_framework import permissions, authentication
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import permissions
 
 
 from .permissions import (
@@ -21,17 +20,11 @@ from .models import (
 
 from .serializers import (
     RegistrationSerializer, CategorySerializer,
-    ProductSerializer, AddressSerializer,
+    CreateProductSerializer, AddressSerializer,
     CartSerializer, CartItemSerializer,
     CommentSerializer, OrderSerializer,
-    CustomTokenObtainPairSerializer,
-    UserSerializer,
+    UserSerializer, ListProductSerializer
 )
-
-
-class CustomObtainTokenPairView(TokenObtainPairView):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = CustomTokenObtainPairSerializer
 
 
 class RegisterView(generics.CreateAPIView):
@@ -93,7 +86,7 @@ class AddCartItem(generics.CreateAPIView):
 
 class ListCreateProduct(generics.ListCreateAPIView):
     model = Product
-    serializer_class = ProductSerializer
+    serializer_class = CreateProductSerializer
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -102,9 +95,12 @@ class ListCreateProduct(generics.ListCreateAPIView):
 
         return Product.objects.filter(user=user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class CreateProduct(generics.CreateAPIView):
-    serializer_class = ProductSerializer
+    serializer_class = CreateProductSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -112,9 +108,9 @@ class CreateProduct(generics.CreateAPIView):
 
 class ListProduct(generics.ListAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = ListProductSerializer
+    # authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
 class ListCreateCategory(generics.ListCreateAPIView):
