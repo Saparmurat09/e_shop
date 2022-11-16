@@ -85,22 +85,29 @@ WSGI_APPLICATION = 'e_shop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if config('DEPLOYMENT') == True:
-    DATABASES = {
+# if config('DEPLOYMENT') == True:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': config('DB_ENGINE'),
+#             'NAME': config('DB_NAME'),
+#             # 'USER': config('DB_USER'),
+#             # 'PASSWORD': config('DB_PASSWORD'),
+#             # 'HOST': config('DB_HOST', 'localhost'),
+#             # 'PORT': '',
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': config('LOCAL_DB_ENGINE'),
+#             'NAME': BASE_DIR / config('LOCAL_DB_NAME'),
+#         }
+#     }
+
+DATABASES = {
         'default': {
-            'ENGINE': config('DB_ENGINE'),
-            'NAME': config('DB_NAME'),
-            # 'USER': config('DB_USER'),
-            # 'PASSWORD': config('DB_PASSWORD'),
-            # 'HOST': config('DB_HOST', 'localhost'),
-            # 'PORT': '',
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': config('LOCAL_DB_ENGINE'),
-            'NAME': BASE_DIR / config('LOCAL_DB_NAME'),
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'e_shop',
         }
     }
 
