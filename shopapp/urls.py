@@ -8,12 +8,41 @@ from rest_framework_simplejwt.views import (
 
 
 urlpatterns = [
-    path('', views.ListProduct.as_view(), name='products'),
-    path('product', views.ListCreateProduct.as_view(), name='products'),
+    path('products/', views.ListProduct.as_view(), name='products'),
     path(
-        'product/create',
+        'products/<int:pk>/',
+        views.DetailProduct.as_view(),
+        name='detail_product'
+    ),
+    path(
+        'products/<int:pk>/comments/',
+        views.ListCreateComment.as_view(),
+        name='comments'
+    ),
+    path(
+        'products/<int:pk>/comments/<int:comment>/replies/',
+        views.ListCreateReply.as_view(),
+        name='replies'
+    ),
+    path(
+        'my-products/create/',
         views.CreateProduct.as_view(),
         name='create_product'
+    ),
+    path(
+        'my-products/',
+        views.ListCreateProduct.as_view(),
+        name='my-products'
+    ),
+    path(
+        'my-products/<int:pk>/',
+        views.RetrieveProduct.as_view(),
+        name='retrieve_product'
+    ),
+    path(
+        'my-products/<int:pk>/comments/',
+        views.ListComment.as_view(),
+        name='retrieve_product'
     ),
     path(
         'cart/',
@@ -30,8 +59,7 @@ urlpatterns = [
         views.ListCreateAddress.as_view(),
         name='list_create_address'
     ),
-
-    path('category', views.ListCreateCategory.as_view(), name='category'),
+    path('category/', views.ListCreateCategory.as_view(), name='category'),
 
     path(
         'login/',
@@ -44,5 +72,12 @@ urlpatterns = [
         name='token_refresh'
     ),
     path('register/', views.RegisterView.as_view(), name='auth_register'),
-    path('users/', views.ListUser.as_view(), name='list_users')
+
+    path('users/', views.ListUser.as_view(), name='list_users'),
+    path('users/<int:pk>', views.DetailAdminUser.as_view(), name='admin_edit'),
+    path(
+        'account/<str:pk>',
+        views.AccountDetail.as_view(),
+        name='account_detail'
+    ),
 ]
