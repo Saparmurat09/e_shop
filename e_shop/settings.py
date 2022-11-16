@@ -29,12 +29,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = False
 
-if config('DEPLOYMENT') == True:
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS').split()
-else:
-    ALLOWED_HOSTS = config('LOCAL_ALLOWED_HOSTS').split()
+ALLOWED_HOSTS = ['*']
+
+# if config('DEPLOYMENT') == True:
+#     ALLOWED_HOSTS = config('ALLOWED_HOSTS').split()
+# else:
+#     ALLOWED_HOSTS = config('LOCAL_ALLOWED_HOSTS').split()
 
 # Application definition
 
@@ -107,6 +109,7 @@ WSGI_APPLICATION = 'e_shop.wsgi.application'
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'e_shop_api',
         }
     }
 
