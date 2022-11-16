@@ -115,7 +115,8 @@ class Comment(models.Model):
 
     content = models.CharField(max_length=200, blank=False, null=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    replies = models.ForeignKey("self", on_delete=models.CASCADE)
+    replies = models.ForeignKey("self", on_delete=models.CASCADE,
+                                blank=True, null=True)
 
     ratings = [
         (1, "1",),
