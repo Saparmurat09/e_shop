@@ -12,7 +12,7 @@ from .models import (
     Product,
     Address,
     Cart,
-    # CartItem,
+    CartItem,
     Category,
     Comment,
     Order
@@ -21,10 +21,10 @@ from .models import (
 from .serializers import (
     RegistrationSerializer, CategorySerializer,
     CreateProductSerializer, AddressSerializer,
-    CartSerializer, CartItemSerializer,
-    OrderSerializer,
-    UserSerializer, ListProductSerializer,
-    UserDetailSerializer,
+    CreateCartSerializer, ListCartSerializer,
+    CreateCartItemSerializer, ListCartItemSerializer,
+    OrderSerializer, UserSerializer,
+    ListProductSerializer, UserDetailSerializer,
     CreateCommentSerializer, ListCommentSerializer,
 )
 
@@ -51,16 +51,20 @@ class ListCreateAddress(generics.ListCreateAPIView):
 
 class ListCreateCart(generics.ListCreateAPIView):
     model = Cart
-    serializer_class = CartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, total_price=0.0)
 
     def get_queryset(self):
         user = self.request.user
 
         return Cart.objects.filter(user=user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateCartSerializer
+        return ListCartSerializer
 
 
 class ListCreateOrder(generics.ListCreateAPIView):
@@ -76,14 +80,6 @@ class ListCreateOrder(generics.ListCreateAPIView):
         user = self.request.user
 
         return Order.objects.filter(user=user)
-
-
-class AddCartItem(generics.CreateAPIView):
-    serializer_class = CartItemSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class ListCreateProduct(generics.ListCreateAPIView):
@@ -221,3 +217,44 @@ class ListCreateReply(generics.ListCreateAPIView):
         if self.request.method == 'POST':
             return CreateCommentSerializer
         return ListCommentSerializer
+
+
+class ListCartItem(generics.ListAPIView):
+    queryset = CartItem.objects.all()
+
+    serializer_class = ListCartItemSerializer
+
+    def get_queryset(self):
+        cart = self.kwargs['pk']
+
+        return CartItem.objects.filter(cart=cart)
+
+
+class CreateCartItem(generics.CreateAPIView):
+    serializer_class = CreateCartItemSerializer
+
+    def perform_create(self, serializer):
+        product = self.kwargs['pk']
+        product = Product.objects.get(id=product)
+        cart = self.kwargs['cart']
+        cart = Cart.objects.get(id=cart)
+        quantity = serializer.validated_data['quantity']
+
+        print(cart.total_price)
+
+        price = product.price * quantity
+
+        # product.quantity = (product.quantity - quantity)
+        # cart.total_price = (cart.total_price + price)
+
+        # product.save(quantity=(product.quantity - quantity))
+
+        # cart.save(total_price=(cart.total_price + price))
+
+        print(cart.total_price)
+
+        serializer.save(
+            cart=cart,
+            product=product,
+            price=price,
+        )
