@@ -15,6 +15,7 @@ from decouple import config
 from datetime import timedelta
 import dj_database_url
 import django_heroku
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
