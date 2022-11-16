@@ -155,16 +155,34 @@ class ListCommentSerializer(serializers.ModelSerializer):
         ]
 
 
-class CartSerializer(serializers.ModelSerializer):
+class CreateCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = [
             'name',
-            'total_price',
         ]
 
 
-class CartItemSerializer(serializers.ModelSerializer):
+class ListCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = [
+            'id',
+            'name',
+            'total_price',
+            'user',
+        ]
+
+
+class CreateCartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = [
+            'quantity',
+        ]
+
+
+class ListCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = [
