@@ -68,6 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
+        model = User
         fields = [
             'email',
             'name',
@@ -105,6 +106,7 @@ class ListProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'id',
             'title',
             'description',
             'pictures',
@@ -129,15 +131,27 @@ class AddressSerializer(serializers.ModelSerializer):
         ]
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CreateCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
             'content',
-            'product',
             'replies',
             'rating',
             'creation_date',
+        ]
+
+
+class ListCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'content',
+            'replies',
+            'rating',
+            'creation_date',
+            'user',
         ]
 
 
