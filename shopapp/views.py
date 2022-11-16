@@ -1,10 +1,10 @@
 from rest_framework import generics
 from rest_framework import permissions
-
+from rest_framework.response import Response
 
 from .permissions import (
-    # ProductCommentPermissions
-    AdminPermissions
+    StaffPermissions,
+    AdminPermissions,
 )
 
 from .models import (
@@ -22,8 +22,10 @@ from .serializers import (
     RegistrationSerializer, CategorySerializer,
     CreateProductSerializer, AddressSerializer,
     CartSerializer, CartItemSerializer,
-    CommentSerializer, OrderSerializer,
-    UserSerializer, ListProductSerializer
+    OrderSerializer,
+    UserSerializer, ListProductSerializer,
+    UserDetailSerializer,
+    CreateCommentSerializer, ListCommentSerializer,
 )
 
 
@@ -99,11 +101,26 @@ class ListCreateProduct(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
+class DetailProduct(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ListProductSerializer
+
+
 class CreateProduct(generics.CreateAPIView):
     serializer_class = CreateProductSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class RetrieveProduct(generics.RetrieveUpdateDestroyAPIView):
+    model = Product
+    serializer_class = CreateProductSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Product.objects.filter(user=user)
 
 
 class ListProduct(generics.ListAPIView):
@@ -114,16 +131,93 @@ class ListProduct(generics.ListAPIView):
 
 class ListCreateCategory(generics.ListCreateAPIView):
     queryset = Category.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [StaffPermissions]
     serializer_class = CategorySerializer
-
-
-class ListCreateComments(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
 
 
 class ListUser(generics.ListAPIView):
     queryset = User.objects.all()
     permission_classes = [AdminPermissions]
     serializer_class = UserSerializer
+
+
+class AccountDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+
+    serializer_class = UserDetailSerializer
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        if user.email != kwargs['pk']:
+            return Response('No permission', status=403)
+
+        serializer = UserDetailSerializer(user)
+
+        return Response(serializer.data)
+
+
+class DetailAdminUser(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+
+    permission_classes = [AdminPermissions]
+    serializer_class = UserDetailSerializer
+
+
+class ListCreateComments(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CreateCommentSerializer
+
+
+class ListComment(generics.ListAPIView):
+    queryset = Comment.objects.all()
+
+    serializer_class = ListCommentSerializer
+
+    def get_queryset(self):
+        product = self.kwargs['pk']
+
+        return Comment.objects.filter(product=product)
+
+
+class ListCreateComment(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+
+    def get_queryset(self):
+        product = self.kwargs['pk']
+        return Comment.objects.filter(product=product)
+
+    def perform_create(self, serializer):
+        product = self.kwargs['pk']
+        serializer.save(
+            user=self.request.user,
+            product=Product.objects.get(id=product)
+        )
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateCommentSerializer
+        return ListCommentSerializer
+
+
+class ListCreateReply(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+
+    def get_queryset(self):
+        product = self.kwargs['pk']
+        comment = self.kwargs['comment']
+        return Comment.objects.filter(product=product, replies=comment)
+
+    def perform_create(self, serializer):
+        product = self.kwargs['pk']
+        comment = self.kwargs['comment']
+        serializer.save(
+            user=self.request.user,
+            product=Product.objects.get(id=product),
+            replies=Comment.objects.get(id=comment)
+        )
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateCommentSerializer
+        return ListCommentSerializer
