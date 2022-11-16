@@ -25,6 +25,11 @@ urlpatterns = [
         name='replies'
     ),
     path(
+        'products/<int:pk>/add-to-cart/<int:cart>',
+        views.CreateCartItem.as_view(),
+        name='replies'
+    ),
+    path(
         'my-products/create/',
         views.CreateProduct.as_view(),
         name='create_product'
@@ -48,6 +53,11 @@ urlpatterns = [
         'cart/',
         views.ListCreateCart.as_view(),
         name='list_create_cart'
+    ),
+    path(
+        'cart/<int:pk>',
+        views.ListCartItem.as_view(),
+        name='list_cart_item'
     ),
     path(
         'order/',
