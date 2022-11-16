@@ -31,11 +31,11 @@ class AdminPermissions(permissions.BasePermission):
     ]
 
     def has_permission(self, request, view):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and request.user.is_admin:
             return True
 
     def has_object_permissions(self, request, view, obj):
-        if request.user.is_superuser:
+        if request.user.is_admin:
             return True
 
         if request.method in permissions.SAFE_METHODS:
