@@ -244,12 +244,11 @@ class CreateCartItem(generics.CreateAPIView):
 
         price = product.price * quantity
 
-        # product.quantity = (product.quantity - quantity)
-        # cart.total_price = (cart.total_price + price)
+        product.quantity = (product.quantity - quantity)
+        cart.total_price = (cart.total_price + price)
 
-        # product.save(quantity=(product.quantity - quantity))
-
-        # cart.save(total_price=(cart.total_price + price))
+        product.save()
+        cart.save()
 
         print(cart.total_price)
 
