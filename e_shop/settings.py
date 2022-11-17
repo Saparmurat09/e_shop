@@ -29,14 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['*']
-
-# if config('DEPLOYMENT') == True:
-#     ALLOWED_HOSTS = config('ALLOWED_HOSTS').split()
-# else:
-#     ALLOWED_HOSTS = config('LOCAL_ALLOWED_HOSTS').split()
+if config('DEPLOYMENT') == True:
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS').split()
+else:
+    ALLOWED_HOSTS = config('LOCAL_ALLOWED_HOSTS').split()
 
 # Application definition
 
@@ -87,29 +85,18 @@ WSGI_APPLICATION = 'e_shop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# if config('DEPLOYMENT') == True:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': config('DB_ENGINE'),
-#             'NAME': config('DB_NAME'),
-#             # 'USER': config('DB_USER'),
-#             # 'PASSWORD': config('DB_PASSWORD'),
-#             # 'HOST': config('DB_HOST', 'localhost'),
-#             # 'PORT': '',
-#         }
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': config('LOCAL_DB_ENGINE'),
-#             'NAME': BASE_DIR / config('LOCAL_DB_NAME'),
-#         }
-#     }
-
-DATABASES = {
+if config('DEPLOYMENT') == True:
+    DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'e_shop_api',
+            'ENGINE': config('DB_ENGINE'),
+            'NAME': config('DB_NAME'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': config('LOCAL_DB_ENGINE'),
+            'NAME': BASE_DIR / config('LOCAL_DB_NAME'),
         }
     }
 
