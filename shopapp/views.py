@@ -99,11 +99,14 @@ class ListCreateProduct(generics.ListCreateAPIView):
 
 class DetailProduct(generics.RetrieveAPIView):
     queryset = Product.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = ListProductSerializer
 
 
 class CreateProduct(generics.CreateAPIView):
     serializer_class = CreateProductSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -122,7 +125,7 @@ class RetrieveProduct(generics.RetrieveUpdateDestroyAPIView):
 class ListProduct(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ListProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class ListCreateCategory(generics.ListCreateAPIView):
@@ -162,6 +165,7 @@ class DetailAdminUser(generics.RetrieveUpdateDestroyAPIView):
 
 class ListCreateComments(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
+    permission_classes = [permissions.IsAuthenticated()]
     serializer_class = CreateCommentSerializer
 
 
