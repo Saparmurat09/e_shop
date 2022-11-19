@@ -4,7 +4,7 @@ This is an API for e-shop which allow to manage products, comment and rate items
 
 ### Postman Collection
 
-https://www.getpostman.com/collections/4bf7e69557fa8a7d20fd
+https://www.postman.com/saparmurat/workspace/e-shop
 
 ### Documentation
 
