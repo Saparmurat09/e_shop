@@ -2,6 +2,9 @@
 
 This is an API for e-shop which allow to manage products, comment and rate items. You can also add items to cart and make an order.
 
+### Postman Collection
+
+https://www.getpostman.com/collections/4bf7e69557fa8a7d20fd
 
 ### Documentation
 
