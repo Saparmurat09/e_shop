@@ -74,14 +74,14 @@ urlpatterns = [
     path(
         'login/',
         TokenObtainPairView.as_view(),
-        name='token_obtain_pair'
+        name='login'
     ),
     path(
         'login/refresh/',
         TokenRefreshView.as_view(),
         name='token_refresh'
     ),
-    path('register/', views.RegisterView.as_view(), name='auth_register'),
+    path('register/', views.RegisterView.as_view(), name='register'),
 
     path('users/', views.ListUser.as_view(), name='list_users'),
     path('users/<int:pk>', views.DetailAdminUser.as_view(), name='admin_edit'),
