@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
 from rest_framework import status
 
@@ -17,7 +17,7 @@ class TestHomePage(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class RegisterLoginTest(APITestCase):
+class RegisterLoginAuthTest(APITestCase):
     def test_register(self):
         url = reverse('register')
 
@@ -33,6 +33,7 @@ class RegisterLoginTest(APITestCase):
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 1)
 
     def test_login(self):
 
@@ -46,6 +47,33 @@ class RegisterLoginTest(APITestCase):
         url = reverse('login')
 
         response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('access', response.json())
+        self.assertIn('refresh', response.json())
+
+    def test_auth(self):
+        user = User.objects.create_user('user@email.com', 'Peasant12')
+
+        data = {
+            "email": "user@email.com",
+            "password": "Peasant12"
+        }
+
+        url = reverse('login')
+
+        response = self.client.post(url, data)
+
+        access_token = response.json()['access']
+
+        client = APIClient()
+
+        client.force_authenticate(user, token=access_token)
+
+        url = reverse('my-products')
+
+        response = client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
