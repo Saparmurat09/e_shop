@@ -134,5 +134,5 @@ dmypy.json
 db.sqlite3
 /e_shop/__pycache__
 .vscode/
-e_shop/migrations
-shopapp/migrations/
+# e_shop/migrations
+# shopapp/migrations/
